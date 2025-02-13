@@ -21,7 +21,7 @@ var userRoutes = []Route{
 	},
 
 	{
-		URI: "/usuarios/{userId}",
+		URI: "/usuarios/{userID}",
 		Method: http.MethodGet,
 		F: controllers.SearchUser,
 		Authenticate: false,
@@ -35,7 +35,7 @@ var userRoutes = []Route{
 	},
 
 	{
-		URI: "/usuarios/{userId}",
+		URI: "/usuarios/{userID}",
 		Method: http.MethodDelete,
 		F: controllers.DeleteUser,
 		Authenticate: false,
