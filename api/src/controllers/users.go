@@ -55,6 +55,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 func SearchAllUsers(w http.ResponseWriter, r *http.Request) {
 	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
 
+	if err := auth.ValidateToken(r); err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
 	db, err := database.Connect()
 	if err != nil{
 		responses.Error(w, http.StatusInternalServerError, err)
@@ -74,6 +79,12 @@ func SearchAllUsers(w http.ResponseWriter, r *http.Request) {
 
 func SearchUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+
+	if err := auth.ValidateToken(r); err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+
+	}
 
 	userID, err := strconv.ParseUint(params["userID"], 10, 64)
 	if err != nil {
