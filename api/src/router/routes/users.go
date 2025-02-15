@@ -41,4 +41,31 @@ var userRoutes = []Route{
 		Authenticate: true,
 	},
 
+	{
+		URI: "/usuarios/{userID}/seguir",
+		Method: http.MethodPost,
+		F: controllers.FollowUser,
+		Authenticate: true,
+	},
+
+	{
+		URI: "/usuarios/{userID}/deixar-de-seguir",
+		Method: http.MethodPost,
+		F: controllers.UnfollowUser,
+		Authenticate: true,
+	},
+
+	{
+		URI: "/usuarios/{userID}/seguidores",
+		Method: http.MethodGet,
+		F: controllers.SearchFollowers,
+		Authenticate: true,
+	},
+
+	{
+		URI: "/usuarios/{userID}/seguindo",
+		Method: http.MethodGet,
+		F: controllers.SearchFollowing,
+		Authenticate: true,
+	},
 }
