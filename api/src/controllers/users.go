@@ -6,6 +6,7 @@ import (
 	"api/src/models"
 	"api/src/repo"
 	"api/src/responses"
+	"api/src/security"
 	"encoding/json"
 	"errors"
 	"io"
@@ -339,4 +340,78 @@ func SearchFollowing(w http.ResponseWriter, r *http.Request) {
 
 	responses.JSON(w, http.StatusOK, seguindo)
 
+}
+
+func UpdatePassword (w http.ResponseWriter, r *http.Request) {
+	tokenID, err := auth.ExtractUserID(r)
+	if err != nil {
+		responses.Error(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	params := mux.Vars(r)
+	userID, err := strconv.ParseUint(params["userID"], 10, 64)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if tokenID != userID {
+		responses.Error(
+			w, 
+			http.StatusForbidden, 
+			errors.New("Você não pode alterar a senha de outro usuário"),
+		)
+
+		return
+	}
+
+	reqBody, err := io.ReadAll(r.Body)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	var pass models.Password
+	if err = json.Unmarshal(reqBody, &pass); err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repo := repo.NewUsersRepository(db)
+	savedPass, err := repo.SearchPassword(userID)
+
+	if err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return 
+	}
+
+	if err = security.CheckPass(savedPass, pass.Current); err != nil {
+		responses.Error(
+			w,
+			http.StatusUnauthorized,
+			errors.New("A senha atual não com diz com a que está salva no banco"),
+		)
+		return
+	}
+
+	hashPass, err := security.Hash(pass.New)
+	if err != nil {
+		responses.Error(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = repo.UpdatePassword(userID, string(hashPass)); err != nil {
+		responses.Error(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(w, http.StatusNoContent, nil)
 }
