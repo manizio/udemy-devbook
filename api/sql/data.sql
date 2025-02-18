@@ -9,3 +9,9 @@ values
 (1, 2),
 (3, 1),
 (1, 3);
+
+insert into posts(title, content, author_id)
+values
+("First post first useer", "firsstl", 1),
+("Lmao wrecked", "sencodn", 2),
+("gangman stylr", "third", 3);
