@@ -3,17 +3,16 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"webapp/src/responses"
 )
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	user, err := json.Marshal(map[string]string{
-		"name":     r.FormValue("name"),
 		"email":    r.FormValue("email"),
-		"nick":     r.FormValue("nick"),
 		"password": r.FormValue("password"),
 	})
 
@@ -23,12 +22,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 			http.StatusBadRequest,
 			responses.APIError{Error: err.Error()},
 		)
-
 		return
 	}
 
 	response, err := http.Post(
-		"http://localhost:5000/usuarios",
+		"http://localhost:5000/login",
 		"application/json",
 		bytes.NewBuffer(user),
 	)
@@ -42,13 +40,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	defer response.Body.Close()
 
-	if response.StatusCode >= 400 {
-		responses.HandleErrorStatusCode(w, response)
-		return
-	}
-
-	responses.JSON(w, response.StatusCode, nil)
-
+	fmt.Println(response.StatusCode, response.Body)
 }
