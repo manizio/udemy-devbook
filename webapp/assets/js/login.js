@@ -8,11 +8,11 @@ function login(e) {
         method: "POST",
         data: {
             email: $('#email').val(),
-            password: $('passwordl').val(),
+            password: $('#password').val(),
         }
     }).done(function() {
         window.location= "/home"
-    }).fail(function() {
+    }).fail(function(e) {
         alert("usuário ou senha inválidos")
     })
 }
