@@ -12,7 +12,7 @@ function login(e) {
         }
     }).done(function() {
         window.location= "/home"
-    }).fail(function(e) {
+    }).fail(function() {
         alert("usuário ou senha inválidos")
     })
 }
