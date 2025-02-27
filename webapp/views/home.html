@@ -35,19 +35,18 @@
                 </fieldset>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7 col-xl-7">
-                {{ range . }}
-                <div class="jumbotron">
-                    <h1 class="display-4">{{ .Title }}</h1>
-                    <p class="lead">{{ .Content }}</p>
-                    <a href="#"> {{ .AuthorNick }} - {{ .CreatedAt }}</a>
-                    <hr class="my-4">
-                    <p>Botoes</p>
-                </div>
+                {{ range .Posts }}
+                    {{ if (eq .AuthorID $.UserID) }}
+                        {{ template "user-posts" . }}
+                    {{ else }}
+                        {{ template "regular-posts" . }}
+                    {{ end }}
                 {{ end }}
             </div>
         </div>
         {{ template "rodape" }}
         {{ template "script" }}
+        <script src="/assets/js/posts.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,43 @@
+{{ define "likes" }}
+{{ if (gt .Likes 0 )}}
+    <i class="fa-solid fa-heart"></i>
+    <span> {{ .Likes }} curtidas </span>
+{{ else }}
+    <i class="fa-regular fa-heart"></i>
+    <span> {{ .Likes }} curtidas </span>
+{{ end }}
+{{ end }}
+
+{{ define "edit" }}
+    <a href="/edit" style="text-decoration: none;"><i class="fa-solid fa-pen-to-square"></i></a>
+{{ end }}
+
+{{ define "delete" }}
+    <a href="/delete" style="text-decoration: none;"><i class="fa-solid fa-trash"></i></a>
+{{ end }}
+{{ define "post-header"}}
+    <h1 class="display-4">{{ .Title }}</h1>
+    <p class="lead">{{ .Content }}</p>
+    <a href="#"> {{ .AuthorNick }} - {{ .CreatedAt.Format "02/01/2006" }}</a>
+    <hr class="my-4">
+{{ end }}
+
+{{ define "user-posts" }}
+    <div class="jumbotron" pub-date-id="{{.ID}}">
+        {{ template "post-header" . }}
+        <p>
+            {{ template "likes" . }}
+            {{ template "edit" . }}
+            {{ template "delete" . }}
+        </p>
+    </div>
+{{ end }}
+
+{{ define "regular-posts" }}
+    <div class="jumbotron" pub-date-id="{{.ID}}">
+        {{ template "post-header" . }}
+        <p>
+            {{ template "likes" . }}
+        </p>
+    </div>
+{{ end }}
