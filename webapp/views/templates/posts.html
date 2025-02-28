@@ -1,19 +1,14 @@
 {{ define "likes" }}
-{{ if (gt .Likes 0 )}}
-    <i class="fa-solid fa-heart"></i>
+    <i class="fa-regular fa-heart like-post" style="cursor: pointer;"></i>
     <span> {{ .Likes }} curtidas </span>
-{{ else }}
-    <i class="fa-regular fa-heart"></i>
-    <span> {{ .Likes }} curtidas </span>
-{{ end }}
 {{ end }}
 
 {{ define "edit" }}
-    <a href="/edit" style="text-decoration: none;"><i class="fa-solid fa-pen-to-square"></i></a>
+    <a href="/posts/{{ .ID }}/edit" style="text-decoration: none;"><i class="fa-solid fa-pen-to-square"></i></a>
 {{ end }}
 
 {{ define "delete" }}
-    <a href="/delete" style="text-decoration: none;"><i class="fa-solid fa-trash"></i></a>
+    <i class="fa-solid fa-trash delete-post" style="cursor: pointer;"></i>
 {{ end }}
 {{ define "post-header"}}
     <h1 class="display-4">{{ .Title }}</h1>
@@ -23,21 +18,21 @@
 {{ end }}
 
 {{ define "user-posts" }}
-    <div class="jumbotron" pub-date-id="{{.ID}}">
+    <div class="jumbotron" data-post-id="{{.ID}}">
         {{ template "post-header" . }}
         <p>
             {{ template "likes" . }}
             {{ template "edit" . }}
             {{ template "delete" . }}
-        </p>
+        </div>
     </div>
 {{ end }}
 
 {{ define "regular-posts" }}
-    <div class="jumbotron" pub-date-id="{{.ID}}">
+    <div class="jumbotron" data-post-id="{{.ID}}">
         {{ template "post-header" . }}
         <p>
             {{ template "likes" . }}
-        </p>
+        </div>
     </div>
 {{ end }}
