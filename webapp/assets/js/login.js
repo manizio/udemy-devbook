@@ -11,8 +11,8 @@ function login(e) {
             password: $('#password').val(),
         }
     }).done(function() {
-        window.location= "/home"
+        window.location = "/home"
     }).fail(function() {
-        alert("usuário ou senha inválidos")
+        Swal.fire("Ops...", "Usuário ou senha incorretos", "error")
     })
 }

@@ -19,7 +19,7 @@ function createPost(event) {
     }).done(function() {
         window.location = "/home"
     }).fail(function() {
-        alert("Erro ao criar a publicação")
+        Swal.fire("Ops...", "Erro ao criar publicação", "error")
     })
 }
 
@@ -41,7 +41,7 @@ function likePost(event) {
         clicked.addClass('text-danger')
         clicked.removeClass('like-post')
     }).fail(function() {
-        alert("Erro ao curtir")
+        Swal.fire("Ops...", "Erro ao curtir", "error")
     }).always(function() {
         clicked.prop('disabled', false)
     })
@@ -72,7 +72,7 @@ function unlikePost(event) {
     })
 }
 
-function updatePost(){ 
+function updatePost() {
     $(this).prop('disabled', true)
 
     const postID = $(this).data('post-id')
@@ -84,32 +84,48 @@ function updatePost(){
             content: $("#content").val()
         }
     }).done(function() {
-        alert("Editado")
+        Swal.fire(
+            'Sucesso!',
+            'Publicação Atualizada com Sucesso',
+            'success'
+        ).then(function() {
+            window.location = "/home"
+        })
     }).fail(function() {
-        alert("erro ao editar publicação")
+        Swal.fire("Ops...", "Erro ao atualizar a publicação", "error")
     }).always(function() {
         $("#edit-post").prop('disabled', false)
     })
 
 }
 
-function deletePost(event){
+function deletePost(event) {
     event.preventDefault()
 
-    const clicked = $(event.target)
-    const post = clicked.closest("div")
-    const postID = post.data("post-id")
+    Swal.fire({
+        title: "Atenção!",
+        text: "Tem certeza que deseja excluir essa publicação?",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        icon: "warning"
+    }).then(function(confirm){
+        if (!confirm.value) return;
+        const clicked = $(event.target)
+        const post = clicked.closest("div")
+        const postID = post.data("post-id")
 
-    clicked.prop('disabled', true)
+        clicked.prop('disabled', true)
 
-    $.ajax({
-        url: `/posts/${postID}`,
-        method: "DELETE",
-    }).done(function (){
-        post.fadeOut("slow", function() {
-            $(this).remove()
+        $.ajax({
+            url: `/posts/${postID}`,
+            method: "DELETE",
+        }).done(function() {
+            post.fadeOut("slow", function() {
+                $(this).remove()
+                })
+        }).fail(function() {
+            Swal.fire("Ops...", "Erro ao excluir publicação", "error")
+
         })
-    }).fail(function() {
-        alert("erro ao excluir publicação")
     })
 }
