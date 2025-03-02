@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"webapp/src/config"
 	"webapp/src/cookies"
 	"webapp/src/models"
@@ -16,6 +17,13 @@ import (
 )
 
 func LoadLoginScreen(w http.ResponseWriter, r *http.Request) {
+	cookies, _ := cookies.Read(r)
+
+	if cookies["token"] != "" {
+		http.Redirect(w, r, "/home", 302)
+		return
+	}
+
 	utils.ExecTemplate(w, "login.html", nil)
 }
 
@@ -98,11 +106,49 @@ func LoadEditPostPage(w http.ResponseWriter, r *http.Request) {
 
 	var post models.Post
 	if err = json.NewDecoder(response.Body).Decode(&post); err != nil {
-		responses.JSON(w, http.StatusUnprocessableEntity, 
+		responses.JSON(w, http.StatusUnprocessableEntity,
 			responses.APIError{
 				Error: err.Error(),
-		})
+			})
 		return
 	}
 	utils.ExecTemplate(w, "edit-post.html", post)
+}
+func LoadSearchedUsersPage(w http.ResponseWriter, r *http.Request) {
+	nameOrNick := strings.ToLower(r.URL.Query().Get("user"))
+	url := fmt.Sprintf("%s/usuarios?user=%s", config.ApiURL, nameOrNick)
+
+	response, err := requests.MakeAuthRequest(r, http.MethodGet, url, nil)
+
+	if err != nil {
+		responses.JSON(
+			w,
+			http.StatusInternalServerError,
+			responses.APIError{
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		responses.HandleErrorStatusCode(w, response)
+		return
+	}
+
+	var users []models.User
+	if err = json.NewDecoder(response.Body).Decode(&users); err != nil {
+		responses.JSON(
+			w,
+			http.StatusInternalServerError,
+			responses.APIError{
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	utils.ExecTemplate(w, "usuarios.html", users)
+
 }

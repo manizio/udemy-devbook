@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"webapp/src/config"
+	"webapp/src/models"
 	"webapp/src/responses"
+
+	"github.com/gorilla/mux"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -54,4 +58,23 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	responses.JSON(w, response.StatusCode, nil)
 
+}
+
+func LoadUserProfile(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userID, err := strconv.ParseUint(params["userID"], 10, 64)
+	if err != nil {
+		responses.JSON(
+			w,
+			http.StatusBadRequest,
+			responses.APIError{
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	user, err := models.SearchFullUser(userID, r)
+
+	fmt.Println(user)
 }
