@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"webapp/src/config"
-	"webapp/src/models"
+	"webapp/src/requests"
 	"webapp/src/responses"
 
 	"github.com/gorilla/mux"
@@ -60,9 +60,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func LoadUserProfile(w http.ResponseWriter, r *http.Request) {
+func Unfollow(w http.ResponseWriter, r *http.Request) { 
 	params := mux.Vars(r)
 	userID, err := strconv.ParseUint(params["userID"], 10, 64)
+
 	if err != nil {
 		responses.JSON(
 			w,
@@ -74,7 +75,63 @@ func LoadUserProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := models.SearchFullUser(userID, r)
+	url := fmt.Sprintf("%s/usuarios/%d/deixar-de-seguir", config.ApiURL, userID)
 
-	fmt.Println(user)
+	response, err := requests.MakeAuthRequest(r, http.MethodPost, url, nil)
+
+	if err != nil {
+		responses.JSON(
+			w,
+			http.StatusInternalServerError,
+			responses.APIError{
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+	defer response.Body.Close()
+	if response.StatusCode >= 400 {
+		responses.HandleErrorStatusCode(w, response)
+		return
+	}
+
+	responses.JSON(w, response.StatusCode, nil)
+}
+
+func Follow(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userID, err := strconv.ParseUint(params["userID"], 10, 64)
+
+	if err != nil {
+		responses.JSON(
+			w,
+			http.StatusBadRequest,
+			responses.APIError{
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	url := fmt.Sprintf("%s/usuarios/%d/seguir", config.ApiURL, userID)
+
+	response, err := requests.MakeAuthRequest(r, http.MethodPost, url, nil)
+	if err != nil {
+		responses.JSON(
+			w,
+			http.StatusInternalServerError,
+			responses.APIError{
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		responses.HandleErrorStatusCode(w, response)
+		return
+	}
+
+	responses.JSON(w, response.StatusCode, nil)
 }

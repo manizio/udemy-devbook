@@ -152,3 +152,41 @@ func LoadSearchedUsersPage(w http.ResponseWriter, r *http.Request) {
 	utils.ExecTemplate(w, "usuarios.html", users)
 
 }
+
+func LoadUserProfile(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userID, err := strconv.ParseUint(params["userID"], 10, 64)
+	if err != nil {
+		responses.JSON(
+			w,
+			http.StatusBadRequest,
+			responses.APIError{
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	user, err := models.SearchFullUser(userID, r)
+
+	if err != nil {
+		responses.JSON(
+			w,
+			http.StatusInternalServerError,
+			responses.APIError{
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+	cookie, _ := cookies.Read(r)
+	loggedUserID, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	utils.ExecTemplate(w, "usuario.html", struct {
+		User         models.User
+		LoggedUserID uint64
+	}{
+		User:         user,
+		LoggedUserID: loggedUserID,
+	})
+}

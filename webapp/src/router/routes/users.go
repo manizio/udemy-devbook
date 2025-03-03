@@ -30,4 +30,16 @@ var usersRoutes = []Route{
 		F: controllers.LoadUserProfile,
 		Authentication: true,
 	},
+	{
+		URI: "/users/{userID}/unfollow",
+		Method: http.MethodPost,
+		F: controllers.Unfollow,
+		Authentication: true,
+	},
+	{
+		URI: "/users/{userID}/follow",
+		Method: http.MethodPost,
+		F: controllers.Follow,
+		Authentication: true,
+	},
 }
