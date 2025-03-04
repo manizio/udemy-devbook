@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Devbook - Perfil</title>
+    <link href="/assets/css/bootstrap.css" rel="stylesheet" />
+</head>
+
+<body>
+    {{ template "cabecalho" }}
+
+    <div class="container-fluid">
+        <div class="row mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Meu Perfil
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        {{ .Name }} - {{ .Nick }} - Membro desde:
+                        {{ .CreatedAt.Format "02/01/2006" }}
+                    </h6>
+                    <p class="card-text">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#modal-followers">
+                            Seguidores: {{ len .Followers }}
+                        </a>
+                    </p>
+                    <p class="card-text">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#modal-following">
+                            Seguindo: {{ len .Following }}
+                        </a>
+                    </p>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="/edit-user" class="card-link">
+                                <button class="btn btn-info">Editar dados</button>
+                            </a>
+                            <a href="/update-password" class="card-link">
+                                <button class="btn btn-info">Atualizar Senha</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Minhas publicações</h5>
+                    <p class="card-text">
+                        {{ range .Posts }}
+                            {{ template "user-posts" . }}
+                        {{ else }}
+                            <p class="text-muted text-center">Nenhuma publicação por enquanto</p>
+                        {{ end }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <a id="delete-user" class="card-link">
+            <button class="btn btn-info">
+                Excluir conta permanentemente
+            </button>
+        </a>
+    </div>
+
+    {{ template "script" }}
+    {{ template "rodape" }}
+
+    {{ template "modal-followers" . }}
+    {{ template "modal-following" . }}
+    <script src="/assets/js/posts.js"></script>
+    <script src="/assets/js/user.js"></script>
+</body>
+
+</html>

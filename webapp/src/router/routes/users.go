@@ -42,4 +42,40 @@ var usersRoutes = []Route{
 		F: controllers.Follow,
 		Authentication: true,
 	},
+	{
+		URI: "/profile",
+		Method: http.MethodGet,
+		F: controllers.LoadProfilePage,
+		Authentication: true,
+	},
+	{
+		URI: "/edit-user",
+		Method: http.MethodGet,
+		F: controllers.LoadEditUserPage,
+		Authentication: true,
+	},
+	{
+		URI: "/edit-user",
+		Method: http.MethodPut,
+		F: controllers.EditUser,
+		Authentication: true,
+	},
+	{
+		URI: "/update-password",
+		Method: http.MethodGet,
+		F: controllers.LoadUpdatePasswordPage,
+		Authentication: true,
+	},
+	{
+		URI: "/update-password",
+		Method: http.MethodPost,
+		F: controllers.UpdatePassword,
+		Authentication: true,
+	},
+	{
+		URI: "/delete-user",
+		Method: http.MethodDelete,
+		F: controllers.DeleteUser,
+		Authentication: true,
+	},
 }
